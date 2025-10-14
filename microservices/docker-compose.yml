@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+
+  core-api:
+    
+    build:
+     
+      context: ./core_microservice
+      
+      dockerfile: Dockerfile
+    
+    ports:
+      - "3000:3000"
+    
+    container_name: core_api_container
+
+  
+  auth-api:
+    build:
+     
+      context: ./auth_microservice
+      dockerfile: Dockerfile
+    ports:
+      
+      - "3001:3001"
+    container_name: auth_api_container
