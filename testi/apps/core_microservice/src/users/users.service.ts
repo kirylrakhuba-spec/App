@@ -33,7 +33,6 @@ export class UsersService {
   async createUser(){
     try{
     const newUser = this.userRepository.create({
-    role: 'User',
     disabled: false,
     created_by:  "User"
    })

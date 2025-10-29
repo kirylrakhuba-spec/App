@@ -2,23 +2,22 @@ import express from 'express';
 
 import { AuthService } from '../services/auth.service';
 import { ERROR_MESSAGES, HTTP_STATUS } from '../constants/error-messages';
+import { HttpService } from '../services/http.service';
+
 
 const router = express.Router();
-const authService = new AuthService();
+const httpService = new HttpService()
+const authService = new AuthService(httpService);
 
 // POST /internal/auth/register
 router.post('/register', async (req, res) => {
   try {
     // TODO: Implement user registration logic
-    throw new Error(ERROR_MESSAGES.METHOD_NOT_IMPLEMENTED);
+    const result = await authService.registerUser(req.body)
+     return res.status(HTTP_STATUS.CREATED).json(result);
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ 
-        error: error.message 
-      });
-    }
-    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ 
-      error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR 
+   return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      error: error instanceof Error ? error.message : ERROR_MESSAGES.INTERNAL_SERVER_ERROR
     });
   }
 });

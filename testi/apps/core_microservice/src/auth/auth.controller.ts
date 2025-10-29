@@ -21,10 +21,16 @@ export class AuthController {
   @ApiResponse({ status: 409, description: 'User already exists' })
   async signUp(@Body() signUpDto: SignUpDto, @Res() res: Response) {
     try {
-      // TODO: Implement user registration logic
-      throw new Error(ERROR_MESSAGES.METHOD_NOT_IMPLEMENTED);
+      const newUser = await this.authService.handleSignUp(signUpDto)
+      return res.status(201).json({
+        message: 'User registered successfully',
+        user: newUser
+      })
     } catch (error) {
-      throw error;
+      return res.status(500).json({
+        message: 'User registration failed',
+        error: error.message,
+      });
     }
   }
 

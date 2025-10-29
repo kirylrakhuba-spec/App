@@ -17,6 +17,22 @@ services:
       - ./apps/core_microservice/.env
     networks:
       - innogram-network
+
+  auth_service:
+    build:
+      context: ./apps/auth_microservice 
+      dockerfile: Dockerfile
+    container_name: auth_service
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./apps/auth_microservice:/App
+      - /App/node_modules
+    restart: unless-stopped
+    env_file:
+      - ./apps/auth_microservice/.env
+    networks:
+      - innogram-network
     
   postgres:
     image: postgres:15
