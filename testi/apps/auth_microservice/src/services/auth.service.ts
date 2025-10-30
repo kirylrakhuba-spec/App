@@ -5,6 +5,8 @@ import { firstValueFrom } from 'rxjs';
 import { HttpService } from './http.service';
 import { AxiosResponse } from 'axios';
 import { Repository } from 'typeorm';
+import { emit } from 'process';
+import { Account } from '@/entities/account.entity';
 
 
 export class AuthService {
@@ -15,7 +17,7 @@ export class AuthService {
 
   constructor(
     private readonly httpService: HttpService,
-    // private readonly accountRepository: Repository<Account>
+    private readonly accountRepository: Repository<Account>
   ) {
     this.jwtSecret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-here';
     this.jwtExpiresIn = process.env.JWT_EXPIRES_IN || '15m';
@@ -23,15 +25,14 @@ export class AuthService {
     this.coreServiceUrl = process.env.CORE_SERVICE_URL || 'http://localhost:3001';
   }
 
-  async registerUser(signUpDto: {
-    email: string;
-    password: string;
-    username: string;
-    displayName: string;
-    birthday: string;
-    bio?: string;
-  }) {
-    const hashedPassword = await this.hashPassword(signUpDto.password)
+  async registerUser(dto: { email: string; password: string }) {
+
+    const existingAccount = await this.accountRepository.findOneBy({email: dto.email})
+    if (existingAccount) {
+      throw new Error('User with this email already exists');
+    }
+
+    const hashedPassword = await this.hashPassword(dto.password)
 
 
   //   const account = await this.accountReposi.save({
@@ -41,20 +42,18 @@ export class AuthService {
   //   created_by: 'system', 
   // });
 
-    const payload = {
-      email: signUpDto.email,
+    const newAccount  = await this.accountRepository.save({
+      email: dto.email,
       password: hashedPassword,
-      username: signUpDto.username,
-      displayName: signUpDto.displayName,
-      birthday: signUpDto.birthday,
-      bio:  signUpDto.bio || ''
-    }
+      provider: 'local',
+      created_by: 'system',
+    })
 
     console.log('POST URL:', `${this.coreServiceUrl}/auth/signup`);
-    console.log('PAYLOAD:', payload);
+    
 
-    const response: CreateUserResponse = await this.httpService.post<CreateUserResponse>(`${this.coreServiceUrl}/auth/signup`, payload);
-    return response;
+    
+    return {accountId: newAccount.id , newAccount};
   }
 
   async authenticateUser(credentials: { email: string; password: string }) {
@@ -93,11 +92,3 @@ export class AuthService {
 }
 
 
-interface CreateUserResponse {
-  email: string;
-    password: string;
-    username: string;
-    displayName: string;
-    birthday: string;
-    bio?: string;
-}

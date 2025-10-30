@@ -6,14 +6,20 @@ import { ERROR_MESSAGES } from '../constants/error-messages';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignUpDto } from './dto/signup.dto';
-import { Account } from '@/database/entities/account.entity';
 import { Repository } from 'typeorm';
 import { AxiosResponse } from 'axios';
+import { User } from '@/database/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Profile } from '@/database/entities/profile.entity';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly httpService: HttpService,
-  // private readonly accountRepository: Repository<Account>
+  @InjectRepository(User)
+  private readonly userRepository: Repository<User>,
+  @InjectRepository(Profile)
+  private readonly profileRepository: Repository<Profile>,
+
     )  {
       // this.accountRepository=accountRepository
     }

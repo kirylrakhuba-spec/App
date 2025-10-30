@@ -1,11 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Account } from './account.entity';
 import { Profile } from './profile.entity';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({type: 'uuid', unique: true})
+  accountId: string
 
   @Column({ type: 'varchar', length: 20, default: 'User' })
   role: string;
@@ -25,9 +27,6 @@ export class User {
   @Column({ type: 'uuid', nullable: true })
   updated_by: string;
 
-  // Relations
-  @OneToMany(() => Account, account => account.user)
-  accounts: Account[];
 
   @OneToMany(() => Profile, profile => profile.user)
   profiles: Profile[];
