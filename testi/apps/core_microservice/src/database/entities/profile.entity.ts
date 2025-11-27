@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { User } from './user.entity';
 import { ProfileFollow } from './profile-follow.entity';
+import { Post } from './post.entity';
 
 @Entity('profiles')
 export class Profile {
@@ -31,7 +32,7 @@ export class Profile {
   @CreateDateColumn()
   created_at: Date;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid',nullable: true })
   created_by: string;
 
   @UpdateDateColumn()
@@ -43,13 +44,15 @@ export class Profile {
   @Column({ type: 'boolean', default: false })
   deleted: boolean;
 
-  // Relations
-  @ManyToOne(() => User, user => user.profiles)
+  @OneToOne(() => User, user => user.profile)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
   @OneToMany(() => ProfileFollow, follow => follow.followerProfile)
   following: ProfileFollow[];
+
+  @OneToMany(() => Post, posts  => posts.profile )
+  posts: Post[];
 
   @OneToMany(() => ProfileFollow, follow => follow.followedProfile)
   followers: ProfileFollow[];

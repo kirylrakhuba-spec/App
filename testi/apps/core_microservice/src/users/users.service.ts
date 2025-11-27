@@ -19,12 +19,12 @@ export class UsersService {
     this.userRepository=userRepository
   }
 
-  async getCurrentUser(userId: string) {
-      const currentUser =await this.userRepository.findOneBy({id: userId})
+  async getCurrentUser(accountId: string) {
+      const currentUser = await this.userRepository.findOne({where:{accountId: accountId}, relations: ['profile']})
       if(!currentUser){
         throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
       }
-      return currentUser
+      return currentUser.profile
   }
   async findAll(){
     return this.userRepository.find()

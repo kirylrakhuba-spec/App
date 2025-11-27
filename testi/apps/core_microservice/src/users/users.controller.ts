@@ -22,9 +22,9 @@ export class UsersController {
   @ApiResponse({ status: HTTP_STATUS.OK, description: 'Current user retrieved successfully' })
   @ApiResponse({ status: HTTP_STATUS.UNAUTHORIZED, description: 'Invalid or missing token' })
   @ApiResponse({ status: HTTP_STATUS.NOT_FOUND, description: 'User not found' })
-  async getCurrentUser(@CurrentUser() user: CurrentUserType) {
+  async getCurrentUser(@CurrentUser() accountId: CurrentUserType) {
     try {
-      return await this.usersService.getCurrentUser(user.id);
+      return await this.usersService.getCurrentUser(accountId.id);
     } catch (error) {
       throw error;
     }

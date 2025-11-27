@@ -12,6 +12,7 @@ dotenv.config();
 // Import routes
 import authRoutes from './controllers/auth.controller';
 import { ERROR_MESSAGES, HTTP_STATUS } from './constants/error-messages';
+import { AppDataSource } from './data-source';
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -66,8 +67,12 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 app.use('*', (req, res) => {
   res.status(HTTP_STATUS.NOT_FOUND).json({ error: ERROR_MESSAGES.NOT_FOUND });
 });
+AppDataSource.initialize()
+.then(()=>{
 
-app.listen(PORT, () => {
+  console.log('[Auth Service] Data Source has been initialized!');
+    app.listen(PORT, () => {
   console.log(`Authentication Microservice running on port ${PORT}`);
   console.log(`Health check available at http://localhost:${PORT}/health`);
+  })
 });

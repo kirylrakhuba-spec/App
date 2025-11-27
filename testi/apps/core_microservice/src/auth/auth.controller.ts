@@ -6,8 +6,9 @@ import { ERROR_MESSAGES } from '../constants/error-messages';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RefreshDto } from './dto/refresh-token.dto';
 import { SignUpDto } from './dto/signup.dto';
+import { LogoutDto } from './dto/logout.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -38,26 +39,20 @@ export class AuthController {
   @ApiOperation({ summary: 'User login with email and password' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  async login(@Body() loginDto: LoginDto, @Res() res: Response) {
-    try {
-      // TODO: Implement login logic
-      throw new Error(ERROR_MESSAGES.METHOD_NOT_IMPLEMENTED);
-    } catch (error) {
-      throw error;
+  async login(@Body() loginDto: LoginDto) {
+      const loginData = await this.authService.handleLogin(loginDto)
+      
+      return loginData
     }
-  }
-
+  
+    
   @Post('refresh')
   @ApiOperation({ summary: 'Refresh access token' })
   @ApiResponse({ status: 200, description: 'Token refreshed successfully' })
   @ApiResponse({ status: 401, description: 'Invalid refresh token' })
-  async refresh(@Body() refreshTokenDto: RefreshTokenDto, @Res() res: Response) {
-    try {
-      // TODO: Implement token refresh logic
-      throw new Error(ERROR_MESSAGES.METHOD_NOT_IMPLEMENTED);
-    } catch (error) {
-      throw error;
-    }
+  async refresh(@Body() refreshTokenDto: RefreshDto) {  
+    const newToken = this.authService.handleRefresh(refreshTokenDto.refreshToken)
+    return newToken
   }
 
   @Get('login/:provider')
@@ -89,16 +84,13 @@ export class AuthController {
   }
 
   @Post('logout')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
   @ApiOperation({ summary: 'User logout' })
   @ApiResponse({ status: 200, description: 'Logout successful' })
-  async logout(@Req() req: Request, @Res() res: Response) {
-    try {
-      // TODO: Implement logout logic
-      throw new Error(ERROR_MESSAGES.METHOD_NOT_IMPLEMENTED);
-    } catch (error) {
-      throw error;
-    }
+  async logout(@Body() logoutDto: LogoutDto ) {
+    const result = await this.authService.handleLogout(logoutDto.refreshToken)
+
+    return result
   }
 }

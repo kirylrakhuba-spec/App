@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Profile } from './entities/profile.entity';
 import { ProfileFollow } from './entities/profile-follow.entity';
+import { Post } from './entities/post.entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -11,8 +12,9 @@ export const AppDataSource = new DataSource({
   username: process.env.POSTGRES_USER || 'innogram_user',
   password: process.env.POSTGRES_PASSWORD || 'innogram_password',
   database: process.env.POSTGRES_DB || 'innogram',
-  entities: [User, Profile, ProfileFollow],
-  migrations: ['./apps/core_microservice/src/database/migrations/*{.ts,.js}'],
+  entities: [User, Profile, ProfileFollow,Post],
+  migrations: [__dirname + '/migrations/*{.ts,.js}'],
   synchronize: false,
   logging: process.env.NODE_ENV === 'development',
+  
 });
