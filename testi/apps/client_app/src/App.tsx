@@ -4,6 +4,7 @@ import './App.css';
 import ProfilePage from './components/ProfilePage';
 import { Routes, Route,  Navigate} from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import PublicProfilePage from './components/PublicProfilePage';
 
 function App() {
   const {accessToken} = useAuth()
@@ -14,6 +15,7 @@ function App() {
           <>
           <Route path="/profile" element={<ProfilePage/>}/>
           <Route path="*" element={<Navigate to="/profile" replace />}/>
+          <Route path="/users/:username" element={<PublicProfilePage />}/>
           </>
         ):(
           <>

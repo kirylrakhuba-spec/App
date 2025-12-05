@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import CreatePostForm from './CreatePostForm';
+import EditProfileModal from './EditProfileModal'; // 👈 1. ИМПОРТ
 import styles from './ProfilePage.module.css';
+import UserSearch from './UserSearch';
 
-// Если VITE_API_URL не задан, используем localhost:3001
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 interface Post {
@@ -36,6 +37,10 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+
   const fetchProfile = async () => {
     const response = await api.get('/users/current_user');
     setProfile(response.data);
@@ -44,7 +49,6 @@ export default function ProfilePage() {
   const fetchPosts = async () => {
     try {
       const response = await api.get('/posts');
-      console.log('ЛЕНТА ПРИШЛА:', response.data); // <-- Лог для проверки
       setPosts(response.data); 
     } catch (err) {
       console.error('Ошибка загрузки постов:', err);
@@ -66,134 +70,136 @@ export default function ProfilePage() {
     init();
   }, []);
 
-  if (loading) return <div style={{color: 'white', textAlign: 'center', marginTop: '20px'}}>Загрузка...</div>;
-
-  if (error) {
-    return (
-        <div style={{color: 'red', textAlign: 'center', marginTop: '20px'}}>
-            <h3>{error}</h3>
-            <button onClick={logout}>Выйти</button>
-        </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-        <div style={{color: 'white', textAlign: 'center', marginTop: '20px'}}>
-            <h3>Профиль не найден</h3>
-            <button onClick={logout}>Выйти</button>
-        </div>
-    );
-  }
-
   const handleDeletePost = async (postId: string) => {
-    // 1. Спрашиваем юзера
-    if (!window.confirm('Ты реально хочешь удалить этот шедевр?')) {
-      return;
-    }
-
+    if (!window.confirm('Удалить пост?')) return;
     try {
-      // 2. Звоним на бэк
       await api.delete(`/posts/${postId}`);
-
-      // 3. Обновляем UI мгновенно (убираем пост из списка)
-      setPosts((prevPosts) => prevPosts.filter(post => post.id !== postId));
-      
+      setPosts((prev) => prev.filter(p => p.id !== postId));
     } catch (err) {
-      console.error('Не удалось удалить пост', err);
-      alert('Ошибка удаления. Может, это не твой пост?');
+      alert('Ошибка удаления');
     }
   };
 
-  // Защита для аватарки профиля
-  const profileInitial = (profile?.username || '?').charAt(0).toUpperCase();
+  if (loading) return <div style={{color: 'white', textAlign: 'center', marginTop: '20px'}}>Загрузка...</div>;
+  if (error) return <div style={{color: 'red', textAlign: 'center'}}>{error} <button onClick={logout}>Выход</button></div>;
+  if (!profile) return <div style={{color: 'white', textAlign: 'center'}}>Профиль не найден <button onClick={logout}>Выход</button></div>;
 
-  return (
-    <div className={styles.container}>
+  // avatar image (if load), or leter
+  const avatarContent = profile.avatar_url 
+    ? <img src={`${API_URL}${profile.avatar_url}`} alt="Avatar" className={styles.realAvatar} />
+    : (profile.username || '?').charAt(0).toUpperCase();
+
+ return (
+    <div className={styles.pageLayout}> {/* 1. ГЛАВНАЯ ОБЕРТКА */}
       
-      {/* --- КАРТОЧКА ПРОФИЛЯ --- */}
-      <div className={styles.card} style={{ marginBottom: '20px' }}>
-        <div className={styles.header}>
-            <div className={styles.avatarPlaceholder}>
-                {profileInitial}
-            </div>
-            <h2>{profile.display_name || 'Без имени'}</h2>
-            <p className={styles.username}>@{profile.username || 'anon'}</p>
-        </div>
-
-        <div className={styles.body}>
-            <div className={styles.infoRow}>
-                <strong>ID:</strong> <span>{profile.id}</span>
-            </div>
-            <div className={styles.infoRow}>
-                <strong>О себе:</strong> <span>{profile.bio || 'Пусто...'}</span>
-            </div>
-            <div className={styles.infoRow}>
-                <strong>ДР:</strong> <span>{profile.birthday ? new Date(profile.birthday).toLocaleDateString() : 'Не указано'}</span>
-            </div>
-        </div>
-
-        <button onClick={logout} className={styles.logoutButton}>
-          Выйти из аккаунта
-        </button>
+      {/* 2. ВЕРХНЯЯ СЕКЦИЯ (ПОИСК) */}
+      <div className={styles.topSection}>
+         <UserSearch excludeUsername={profile?.username} />
       </div>
 
-      {/*  create post form */}
-      <div style={{ width: '100%', maxWidth: '800px' }}>
-          <CreatePostForm onPostCreated={fetchPosts} />
-      </div>
+      {/* 3. СЕТКА (ЛЕВО + ПРАВО) */}
+      <div className={styles.contentGrid}>
 
-    
-      <div style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '20px', paddingBottom: '50px' }}>
-        {posts.map((post) => {
-            const authorName = post.profile?.username || 'Unknown';
-            const authorInitial = authorName.charAt(0).toUpperCase();
-            const canDelete = true; 
-
-            return (
-              <div key={post.id} className={styles.postCard}>
-                
-                <div className={styles.postHeader}>
-                    <div className={styles.postAuthor}>
-                        <div className={styles.postAvatar}>
-                            {authorInitial}
-                        </div>
-                        <span className={styles.postUsername}>@{authorName}</span>
+          {/* --- ЛЕВАЯ КОЛОНКА: ПРОФИЛЬ (LIPKY) --- */}
+          <aside className={styles.leftColumn}>
+            <div className={styles.card}>
+                <div className={styles.header}>
+                    <div className={styles.avatarPlaceholder} style={profile.avatar_url ? {background: 'transparent', padding: 0} : {}}>
+                        {avatarContent}
                     </div>
+                    <h2>{profile.display_name || 'Без имени'}</h2>
+                    <p className={styles.username}>@{profile.username}</p>
 
-                    {/* delete btn */}
-                    {canDelete && (
-                        <button 
-                            onClick={() => handleDeletePost(post.id)} 
-                            className={styles.deleteBtn}
-                            title="Удалить пост"
-                        >
-                            🗑️
-                        </button>
-                    )}
+                    <button 
+                        onClick={() => setIsEditModalOpen(true)}
+                        style={{
+                            marginTop: '15px',
+                            background: 'transparent',
+                            border: '1px solid #555',
+                            color: '#ccc',
+                            padding: '6px 12px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '13px'
+                        }}
+                    >
+                        ✏️ Редактировать
+                    </button>
                 </div>
 
-                
-                <img 
-                    src={`${API_URL}${post.imageUrl}`} 
-                    alt="Post" 
-                    className={styles.postImage}
-                    onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x300?text=Image+Not+Found';
-                    }} 
-                />
-
-            
-                <div className={styles.postContent}>
-                    <p className={styles.postCaption}>{post.caption}</p>
-                    <span className={styles.postDate}>
-                        {new Date(post.created_at).toLocaleString()}
-                    </span>
+                <div className={styles.body}>
+                    <div className={styles.infoRow}><strong>ID:</strong> <span>...{profile.id.slice(-5)}</span></div>
+                    <div className={styles.infoRow}><strong>О себе:</strong> <span>{profile.bio || 'Пусто...'}</span></div>
+                    <div className={styles.infoRow}>
+                        <strong>ДР:</strong> <span>{profile.birthday ? new Date(profile.birthday).toLocaleDateString() : '-'}</span>
+                    </div>
                 </div>
-              </div>
-            );
-        })}
-      </div>
+
+                <button onClick={logout} className={styles.logoutButton}>Выйти</button>
+            </div>
+          </aside>
+
+
+          {/* --- ПРАВАЯ КОЛОНКА: СТЕНА --- */}
+          <main className={styles.rightColumn}>
+             
+             {/* Форма создания поста */}
+             <div style={{ marginBottom: '30px' }}>
+                 <CreatePostForm onPostCreated={fetchPosts} />
+             </div>
+
+             {/* Лента */}
+             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {posts.map((post) => {
+                    const authorName = post.profile?.username || 'Unknown';
+                    const postAvatarUrl = post.profile?.avatar_url;
+                    const canDelete = true; 
+
+                    return (
+                        <div key={post.id} className={styles.postCard}>
+                           <div className={styles.postHeader}>
+                               <div className={styles.postAuthor}>
+                                   <div className={styles.postAvatar} style={postAvatarUrl ? {background:'transparent', padding:0} : {}}>
+                                       {postAvatarUrl 
+                                           ? <img src={`${API_URL}${postAvatarUrl}`} style={{width:'100%', height:'100%', objectFit:'cover', borderRadius: '50%'}} />
+                                           : authorName.charAt(0).toUpperCase()
+                                       }
+                                   </div>
+                                   <span className={styles.postUsername}>@{authorName}</span>
+                               </div>
+                               {canDelete && <button onClick={() => handleDeletePost(post.id)} className={styles.deleteBtn} title="Удалить">🗑️</button>}
+                           </div>
+
+                           <img 
+                               src={`${API_URL}${post.imageUrl}`} 
+                               alt="Post" 
+                               className={styles.postImage} 
+                               onError={(e) => (e.target as HTMLImageElement).src = 'https://placehold.co/600x400?text=Error'} 
+                           />
+                           
+                           <div className={styles.postContent}>
+                               <p className={styles.postCaption}>{post.caption}</p>
+                               <span className={styles.postDate}>{new Date(post.created_at).toLocaleString()}</span>
+                           </div>
+                        </div>
+                    )
+                })}
+                {posts.length === 0 && <div style={{textAlign:'center', color:'#666'}}>Постов нет</div>}
+             </div>
+          </main>
+
+      </div> {/* Конец contentGrid */}
+
+
+      {/* Модалка (вне сетки) */}
+      {isEditModalOpen && (
+        <EditProfileModal
+            currentName={profile.display_name}
+            currentBio={profile.bio || ''}
+            onClose={() => setIsEditModalOpen(false)}
+            onUpdate={() => { fetchProfile(); fetchPosts(); }}
+        />
+      )}
 
     </div>
   );

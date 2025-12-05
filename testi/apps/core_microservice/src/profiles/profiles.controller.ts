@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { HTTP_STATUS } from '../constants/error-messages';
@@ -7,6 +7,7 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { ProfilesService } from './profiles.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { query } from 'express';
 
 @ApiTags('Profiles')
 @Controller('profiles')
@@ -43,5 +44,37 @@ export class ProfilesController {
     }
 
     return this.profilesService.updateProfile(user.id, dto, avatarUrl);
+  }
+
+  @Get('search')
+  async findProfile(@Query('q') query: string){
+  if (!query) return [];
+
+    return await this.profilesService.search(query)
+  }
+
+
+  @Get(':username') 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async getProfileForUser(@Param('username') username:string){
+    return await this.profilesService.getProfileByUsername(username)
+  }
+
+
+  @Post(':username/follow')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Follow user' })
+  async userFollow(@Param('username') username:string,@CurrentUser() user: {id:string}){
+    return this.profilesService.follow(user.id,username)
+  }
+
+  @Delete(':username/follow')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Unfollow user' })
+  async userUnfollow(@Param('username') username:string,@CurrentUser() user: {id:string}){
+    return this.profilesService.unfollow(user.id,username)
   }
 }

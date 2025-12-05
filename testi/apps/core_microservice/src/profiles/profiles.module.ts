@@ -17,6 +17,7 @@ import { extname } from 'path';
 
   MulterModule.register({
     storage: diskStorage({
+      destination: './uploads',
       filename: (req, file, cd) =>{
         const randomName = uuidv4()
         const extension = extname(file.originalname)

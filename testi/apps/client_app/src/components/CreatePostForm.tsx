@@ -88,4 +88,4 @@ export default function CreatePostForm({ onPostCreated }: Props) {
       </form>
     </div>
   );
-}
+}                               

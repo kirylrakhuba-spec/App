@@ -29,8 +29,12 @@ export class PostService {
         caption: data.caption,
         profile: authProfile
     })
-    return await this.postRepository.save(newPost)
-    }
+    const savedPost = await this.postRepository.save(newPost)
+    return this.postRepository.findOne({
+        where: { id: savedPost.id },
+        relations: ['profile']
+    })
+}
 
     async remove(postId:string,currentAccountId:string){
         const post = await this.postRepository.findOne({where:{id:postId},
@@ -72,7 +76,7 @@ export class PostService {
         return post
     }
     async findAll(){
-        return this.postRepository.find()
+        return this.postRepository.find({relations: ['profile']})
     }
 }
 
