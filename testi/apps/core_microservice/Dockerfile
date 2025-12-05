@@ -1,5 +1,5 @@
 FROM node:18-alpine AS builder
-
+RUN apk add --no-cache curl
 WORKDIR /App
 
 COPY package*.json ./

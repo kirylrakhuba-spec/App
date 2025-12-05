@@ -1,0 +1,172 @@
+/* src/components/ProfilePage.module.css */
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.card {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    color: #e0e0e0;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 20px;
+}
+
+.avatarPlaceholder {
+    width: 80px;
+    height: 80px;
+    background-color: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.username {
+    color: #888;
+    margin: 0;
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 5px;
+}
+
+.logoutButton {
+    width: 100%;
+    padding: 12px;
+    background-color: #dc3545; /* Красный для выхода */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.logoutButton:hover {
+    background-color: #c82333;
+}
+
+.loading, .error {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 18px;
+}
+.error { color: #ff4d4d; }
+
+
+.postCard {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 12px;
+    width: 100%;
+    margin-bottom: 20px;
+    overflow: hidden; 
+    transition: transform 0.2s;
+}
+
+.postCard:hover {
+    border-color: #444;
+}
+
+.postHeader {
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    border-bottom: 1px solid #2a2a2a;
+    background-color: #252525;
+}
+
+.postAuthor {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.postAvatar {
+    width: 32px;
+    height: 32px;
+    background-color: #007bff; 
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+}
+
+.postUsername {
+    font-weight: bold;
+    color: #fff;
+    font-size: 14px;
+}
+
+
+.deleteBtn {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.deleteBtn:hover {
+    color: #ff4d4d; 
+    background-color: rgba(255, 77, 77, 0.1);
+}
+
+.postImage {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    
+}
+
+.postContent {
+    padding: 15px;
+}
+
+.postCaption {
+    color: #e0e0e0;
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.postDate {
+    color: #666;
+    font-size: 12px;
+}

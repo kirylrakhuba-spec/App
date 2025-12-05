@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 import { Profile } from './profile.entity';
 
 @Entity('users')
@@ -28,6 +28,6 @@ export class User {
   updated_by: string;
 
 
-  @OneToMany(() => Profile, profile => profile.user)
-  profiles: Profile[];
+  @OneToOne(() => Profile, profile => profile.user)
+  profile: Profile[];
 }

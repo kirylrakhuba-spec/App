@@ -24,7 +24,7 @@ export class Account {
   @CreateDateColumn()
   created_at: Date;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid' ,nullable: true})
   created_by: string;
 
   @UpdateDateColumn()

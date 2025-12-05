@@ -11,6 +11,7 @@ import { ProfilesModule } from './profiles/profiles.module';
 
 // Database configuration
 import { DatabaseConfig } from './database/database.config';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { DatabaseConfig } from './database/database.config';
     AuthModule,
     UsersModule,
     ProfilesModule,
+    PostModule,
   ],
   controllers: [],
   providers: [],
