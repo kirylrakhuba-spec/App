@@ -1,0 +1,29 @@
+{
+  "monorepo": true,
+  "root": "apps/innogram",
+  "sourceRoot": "apps/innogram/src",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/innogram/tsconfig.app.json"
+  },
+  "projects": {
+    "innogram": {
+      "type": "application",
+      "root": "apps/innogram",
+      "entryFile": "main",
+      "sourceRoot": "apps/innogram/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/innogram/tsconfig.app.json"
+      }
+    },
+    "notifications_microservice": {
+      "type": "application",
+      "root": "apps/notifications_microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/notifications_microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notifications_microservice/tsconfig.app.json"
+      }
+    }
+  }
+}

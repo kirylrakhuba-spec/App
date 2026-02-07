@@ -24,7 +24,7 @@ export class UsersService {
       if(!currentUser){
         throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
       }
-      return currentUser.profile
+      return currentUser
   }
   async findAll(){
     return this.userRepository.find()

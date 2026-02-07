@@ -57,8 +57,8 @@ export class ProfilesController {
   @Get(':username') 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async getProfileForUser(@Param('username') username:string){
-    return await this.profilesService.getProfileByUsername(username)
+  async getProfileForUser(@Param('username') username:string, @CurrentUser()user:{id:string}){
+    return await this.profilesService.getProfileByUsername(username,user.id)
   }
 
 
@@ -76,5 +76,12 @@ export class ProfilesController {
   @ApiOperation({ summary: 'Unfollow user' })
   async userUnfollow(@Param('username') username:string,@CurrentUser() user: {id:string}){
     return this.profilesService.unfollow(user.id,username)
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({summary: 'Get all profiles'})
+  async findAllProfiles(){
+    return await this.profilesService.findAll()
   }
 }

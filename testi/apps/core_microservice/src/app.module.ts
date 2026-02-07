@@ -12,6 +12,7 @@ import { ProfilesModule } from './profiles/profiles.module';
 // Database configuration
 import { DatabaseConfig } from './database/database.config';
 import { PostModule } from './post/post.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { PostModule } from './post/post.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ChatModule,
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConfig,
     }),

@@ -5,7 +5,8 @@ import ProfilePage from './components/ProfilePage';
 import { Routes, Route,  Navigate} from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import PublicProfilePage from './components/PublicProfilePage';
-
+import { ChatPage } from './components/ChatPage';
+// import { ChatInterface } from './components/ChatInterface';
 function App() {
   const {accessToken} = useAuth()
   return (
@@ -14,8 +15,10 @@ function App() {
         {accessToken ? (
           <>
           <Route path="/profile" element={<ProfilePage/>}/>
-          <Route path="*" element={<Navigate to="/profile" replace />}/>
           <Route path="/users/:username" element={<PublicProfilePage />}/>
+          <Route path='/chat' element={<ChatPage/>}/>
+
+          <Route path="*" element={<Navigate to="/profile" replace />}/>
           </>
         ):(
           <>

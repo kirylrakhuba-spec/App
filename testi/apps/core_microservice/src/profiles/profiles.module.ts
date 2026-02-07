@@ -7,13 +7,13 @@ import { ProfilesService } from './profiles.service';
 import { AuthModule } from '@/auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-
+import { ProfileFollow } from '../database/entities/profile-follow.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
 
 
 @Module({
-  imports: [AuthModule,TypeOrmModule.forFeature([Profile]),
+  imports: [AuthModule,TypeOrmModule.forFeature([Profile,ProfileFollow]),
 
   MulterModule.register({
     storage: diskStorage({

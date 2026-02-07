@@ -5,7 +5,7 @@ import CreatePostForm from './CreatePostForm';
 import EditProfileModal from './EditProfileModal'; // 👈 1. ИМПОРТ
 import styles from './ProfilePage.module.css';
 import UserSearch from './UserSearch';
-
+import { Link } from 'react-router-dom';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 interface Post {
@@ -42,7 +42,7 @@ export default function ProfilePage() {
 
 
   const fetchProfile = async () => {
-    const response = await api.get('/users/current_user');
+    const response = await api.get('/profiles/me');
     setProfile(response.data);
   };
 
@@ -99,7 +99,7 @@ export default function ProfilePage() {
 
       {/* 3. СЕТКА (ЛЕВО + ПРАВО) */}
       <div className={styles.contentGrid}>
-
+      <Link to={'/chat'}><button>Чат</button></Link>
           {/* --- ЛЕВАЯ КОЛОНКА: ПРОФИЛЬ (LIPKY) --- */}
           <aside className={styles.leftColumn}>
             <div className={styles.card}>

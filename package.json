@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "argon2": "^0.44.0"
+    "@nestjs/platform-socket.io": "^11.1.9",
+    "@nestjs/websockets": "^11.1.9",
+    "argon2": "^0.44.0",
+    "socket.io": "^4.8.1"
   }
 }

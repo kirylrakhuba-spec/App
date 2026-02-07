@@ -1,0 +1,55 @@
+.overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal {
+  background: #1e1e1e;
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  border: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  color: #e0e0e0;
+}
+
+.modal h3 { margin: 0 0 10px 0; text-align: center; }
+.fileLabel { display: block; font-size: 14px; color: #aaa; margin-bottom: 5px; }
+
+.input, .textarea {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.textarea { min-height: 100px; resize: vertical; }
+
+.buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
+
+.saveBtn {
+  background: #007bff; color: white; border: none; padding: 10px 20px;
+  border-radius: 6px; cursor: pointer; font-weight: bold;
+}
+.saveBtn:hover { background: #0056b3; }
+
+.cancelBtn {
+  background: transparent; color: #aaa; border: 1px solid #444;
+  padding: 10px 20px; border-radius: 6px; cursor: pointer;
+}
+.cancelBtn:hover { color: #fff; border-color: #666; }

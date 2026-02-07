@@ -82,18 +82,38 @@ export class ProfilesService {
   return profiles
   }
 
-  async getProfileByUsername(username: string){
-    const userProfile = await this.profileRepository.findOne(
+  async getProfileByUsername(username: string,viewerAccountId?: string){
+    const targetProfile = await this.profileRepository.findOne(
       {where:{username:username},
       relations:['posts'],
       order: {
         posts: {
           created_at: 'DESC'}
   }})
-  if (!userProfile) {
+  if (!targetProfile) {
       throw new NotFoundException('User not found'); 
     }
-    return userProfile
+
+    let isFollowing = false
+    if(viewerAccountId){
+      const myProfile = await this.profileRepository.findOne({where:
+        {user:{accountId: viewerAccountId}}})
+        if(myProfile){
+          const followEntry = await this.profileFollow.findOne({
+            where:{
+              followerProfile:{id: myProfile.id},
+              followedProfile:{id: targetProfile.id}
+            }
+          })
+          if (followEntry) {
+            isFollowing = true;
+        } else {
+            isFollowing = false;
+        }
+        }
+    }
+    
+    return {...targetProfile,isFollowing}
   }
 
   async follow(myAccountId:string,targetUsername:string){
@@ -123,7 +143,9 @@ export class ProfilesService {
  
     const follower = this.profileFollow.create({
     follower_profile_id: myProfile.id,
-    followed_profile_id: targetUser.id
+    followed_profile_id: targetUser.id,
+
+    created_by: myAccountId
     })
     return this.profileFollow.save(follower)
   }
@@ -153,6 +175,10 @@ export class ProfilesService {
       throw new BadRequestException('You dont follow')
     }
     return this.profileFollow.remove(existingFollow)
+  }
+
+  async findAll(){
+    return await this.profileRepository.find({relations: ['user']})
   }
   
 }
